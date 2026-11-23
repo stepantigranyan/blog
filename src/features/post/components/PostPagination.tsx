@@ -2,7 +2,6 @@ import { FC } from 'react';
 import {
     Pagination,
     PaginationContent,
-    PaginationEllipsis,
     PaginationItem,
     PaginationLink,
     PaginationNext,
@@ -46,19 +45,19 @@ const PostPagination: FC<PostPaginationProps> = ({ pages, currentPage, limit }) 
                     </PaginationItem>
 
 
-                    {currentPage  < pages - 1 && (
+                    {currentPage < pages && (
                         <PaginationItem>
                             <PaginationLink href={`?page=${currentPage + 1}&limit=${limit}`}>{currentPage + 1}</PaginationLink>
                         </PaginationItem>
                     )}
 
-                    {currentPage  < pages - 2 && (
+                    {currentPage  < pages - 1 && (
                         <PaginationItem>
                             <PaginationLink href={`?page=${currentPage + 2}&limit=${limit}`}>{currentPage + 2}</PaginationLink>
                         </PaginationItem>
                     )}
 
-                    {currentPage  < pages - 1 && (
+                    {currentPage  < pages && (
                         <PaginationItem>
                             <PaginationNext href={`?page=${currentPage + 1}&limit=${limit}`} />
                         </PaginationItem>

@@ -11,11 +11,9 @@ const App: FC<AppProps> = async ({ searchParams}) => {
   const query = await searchParams;
 
   const page = Number(query.page) || 1;
-  const limit = Number(query.limit) || 3;
+  const limit = Number(query.limit) || 4;
 
   const allPosts = await getAllPosts(page, limit);
-
-  console.log(allPosts);
 
   if(!allPosts) {
     return
@@ -24,7 +22,9 @@ const App: FC<AppProps> = async ({ searchParams}) => {
   return (
       <main className='grid grid-rows-[1fr_auto] gap-y-5'>
         <PostList key={`${page}-${limit}`} data={allPosts?.data}/>
-        <PostPagination pages={allPosts.allPages} currentPage={page} limit={limit} />
+          { allPosts.allPages > 1 && (
+              <PostPagination pages={allPosts.allPages} currentPage={page} limit={limit} />
+          )}
       </main>
   );
 };

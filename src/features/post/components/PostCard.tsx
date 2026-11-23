@@ -1,3 +1,4 @@
+import { FC } from "react";
 import Link from "next/link";
 
 import {
@@ -11,7 +12,8 @@ import {
 import { CalendarIcon } from "lucide-react";
 
 import type { PostAttributes } from "@/features/post/types";
-import { FC } from "react";
+import { formatToLongDate } from '@/lib/utils'
+import { ROUTES } from '@/routes'
 
 interface PostCardProps extends Omit<PostAttributes, "content" | "updatedAt"> {}
 
@@ -27,10 +29,10 @@ const PostCard: FC<PostCardProps> = ({
       <CardHeader className="space-y-2">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CalendarIcon className="h-3.5 w-3.5" />
-          <time>{createdAt}</time>
+          <span>{formatToLongDate(createdAt)}</span>
         </div>
         <CardTitle className="cursor-pointer text-xl leading-snug">
-          <Link href={`/post/${id}`}>{title}</Link>
+          <Link href={ROUTES.GET_POST(id)}>{title}</Link>
         </CardTitle>
       </CardHeader>
 

@@ -25,13 +25,8 @@ export const PostSchema = z.object({
 export type PostInput = z.infer<typeof PostSchema>;
 
 export type ActionState = {
-    success?: boolean;
+    success: boolean;
     message?: string;
     values?: PostOptionalAttributes;
-    errors?: {
-        title?: string[];
-        author?: string[];
-        description?: string[];
-        content?: string[];
-    };
+    errors?: Partial<Record<PostInput, string[]>>
 };

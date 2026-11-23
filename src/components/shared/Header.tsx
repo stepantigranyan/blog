@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ROUTES } from '@/routes'
 
 import { Newspaper } from "lucide-react";
 
@@ -11,12 +12,12 @@ const Header = () => {
       </div>
       <ul className="flex items-center gap-4">
         <li>
-          <Link href={"/"} className={` inline-block py-3`}>
+          <Link href={ROUTES.HOME} className={` inline-block py-3`}>
             <span className={`text-sm`}>All Posts</span>
           </Link>
         </li>
         <li>
-          <Link href={"/new"} className={` inline-block py-3`}>
+          <Link href={ROUTES.CREATE_POST} className={` inline-block py-3`}>
             <span className="text-sm">New Post</span>
           </Link>
         </li>

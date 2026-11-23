@@ -15,6 +15,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { redirect } from 'next/navigation';
+import { ROUTES } from '@/routes';
 
 interface PostFormProps {
     postId?: string;
@@ -28,7 +30,16 @@ const initialState: ActionState = {
 
 export function PostForm({ postId, initialData }: PostFormProps) {
     const action = postId ? editPost.bind(null, postId) : createPost;
-    const [state, formAction, isPending] = useActionState(action, initialState);
+
+    const formAct = async (e: FormData) => {
+            const actionState = await action(initialState, e);
+            if (!actionState.success) {
+                return
+            }
+            redirect(ROUTES.HOME);
+    }
+
+    const [state, formAction, isPending] = useActionState(formAct, initialState);
 
     return (
         <Card className="max-w-xl mx-auto">

@@ -15,14 +15,15 @@ import { Separator } from "@/components/ui/separator";
 
 import { ArrowLeft, Calendar, Clock, Pencil, User, Trash } from "lucide-react";
 
-import PostApi from "@/features/post/api";
+import { getPost } from '@/features/post/queries';
+import { ROUTES } from '@/routes'
 
 import { readingTimeMinutes } from "@/lib/utils";
 import DeletePostDialog from '@/features/post/components/DeletePostDialog';
 
 const PostInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
-  const post = await PostApi.getOne(id);
+  const post = await getPost(id);
 
   if (!post) {
     notFound();
@@ -32,7 +33,7 @@ const PostInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
     <main className="mx-auto max-w-3xl px-4 py-10">
       <div className="mb-6 flex items-center justify-between">
         <Button className="cursor-pointer" variant="ghost" size="sm">
-          <Link href="/" className="inline-flex items-center gap-1">
+          <Link href={ROUTES.HOME} className="inline-flex items-center gap-1">
             <ArrowLeft className="mr-2 h-4 w-4" />
             <span>Back to Posts</span>
           </Link>
@@ -41,7 +42,7 @@ const PostInfo = async ({ params }: { params: Promise<{ id: string }> }) => {
         <div className="flex items-center gap-1">
           <Button className="cursor-pointer" variant="outline" size="sm">
             <Link
-              href={`/post/${post.id}/edit`}
+              href={ROUTES.EDIT_POST(id)}
               className="inline-flex items-center gap-1"
             >
               <Pencil className="mr-2 h-4 w-4" />
