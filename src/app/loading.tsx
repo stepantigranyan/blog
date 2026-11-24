@@ -1,10 +1,11 @@
-import { Spinner } from "@/components/ui/spinner";
+import React from 'react';
 
-const Loading = () => (
-  <div className="flex items-center gap-4">
-    <Spinner className="size-10" />
-    <h2 className="text-xl">Loading</h2>
-  </div>
-);
+const Loading = () => {
+    return (
+        <div className='h-screen bg-red-500'>
+            Loading
+        </div>
+    );
+};
 
 export default Loading;

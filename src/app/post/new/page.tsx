@@ -1,9 +1,14 @@
-import { PostForm } from "@/features/post/components/PostForm";
+'use client';
 
-const NewPostPage = async () =>  {
-    return (
-      <PostForm />
-  );
+import PostForm from '@/features/post/components/form/PostForm';
+import { ActionState } from '@/features/post/shemas';
+
+const emptyData: ActionState = {
+    success: false,
 };
 
-export default NewPostPage;
+const CreatePostPage = () => {
+    return <PostForm initialData={emptyData} />;
+};
+
+export default CreatePostPage;

@@ -1,10 +1,5 @@
-import { Spinner } from "@/components/ui/spinner";
+import PostFormLoading from '@/features/post/components/form/PostFormLoading';
 
-const Loading = () => (
-  <div className="flex items-center gap-4">
-    <Spinner className="size-10" />
-    <h2 className="text-xl">Loading</h2>
-  </div>
-);
+const Loading = () => <PostFormLoading />;
 
 export default Loading;
