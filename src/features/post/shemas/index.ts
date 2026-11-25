@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PostAttributes, PostOptionalAttributes } from '@/features/post/types';
+import { PostOptionalAttributes } from '@/features/post/types';
 
 export const PostSchema = z.object({
     title: z
@@ -23,15 +23,13 @@ export const PostSchema = z.object({
 });
 
 export type PostInput = z.infer<typeof PostSchema>;
+export type PostErrorTypes = Partial<
+    Record<keyof PostInput, string[] | undefined>
+>;
 
 export type ActionState = {
     success: boolean;
     message?: string;
     values?: PostOptionalAttributes;
-    errors?: {
-        title?: string[];
-        author?: string[];
-        description?: string[];
-        content?: string[];
-    };
+    errors?: PostErrorTypes;
 };

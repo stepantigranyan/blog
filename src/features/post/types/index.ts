@@ -1,3 +1,5 @@
+import { SORT_ATTRIBUTES } from '@/lib/consts';
+
 export interface PostAttributes {
     id: string;
     title: string;
@@ -14,6 +16,10 @@ export interface PostOptionalAttributes extends Omit<
 > {}
 
 export interface PostSearchOptions {
-    title?: string;
-    author?: string;
+    page: string;
+    limit: string;
+    content?: string;
+    sort?: SORT_TYPES;
 }
+
+export type SORT_TYPES = (typeof SORT_ATTRIBUTES)[number]['value'];

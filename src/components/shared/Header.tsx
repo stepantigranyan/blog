@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { Newspaper } from 'lucide-react';
 
@@ -14,11 +16,6 @@ const Header = () => {
             <ul className="flex items-center gap-4">
                 <li>
                     <Link href={ROUTES.HOME} className="inline-block py-3">
-                        <span className={`text-sm`}>Home</span>
-                    </Link>
-                </li>
-                <li>
-                    <Link href={ROUTES.GET_POSTS} className="inline-block py-3">
                         <span className={`text-sm`}>All Posts</span>
                     </Link>
                 </li>

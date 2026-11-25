@@ -1,5 +1,8 @@
+'use client';
+
 import { FC } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
     Card,
@@ -24,6 +27,14 @@ const PostCard: FC<PostCardProps> = ({
     author,
     createdAt,
 }) => {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const handleShowInfo = () => {
+        sessionStorage.setItem('prevPage', searchParams.toString());
+        router.push(`${ROUTES.GET_POST(id)}`);
+    };
+
     return (
         <Card className="min-h-70 flex flex-col justify-between w-full transition-shadow hover:shadow-md">
             <div className="h-full flex flex-col justify-between">
@@ -32,13 +43,11 @@ const PostCard: FC<PostCardProps> = ({
                         <CalendarIcon className="size-3.5" />
                         <span>{formatToLongDate(createdAt)}</span>
                     </div>
-                    <CardTitle className="cursor-pointer text-xl leading-snug">
-                        <Link
-                            href={ROUTES.GET_POST(id)}
-                            className="line-clamp-3"
-                        >
-                            {title}
-                        </Link>
+                    <CardTitle
+                        onClick={handleShowInfo}
+                        className="line-clamp-3 cursor-pointer text-xl leading-snug"
+                    >
+                        {title}
                     </CardTitle>
                 </CardHeader>
 

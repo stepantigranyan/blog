@@ -84,7 +84,10 @@ export async function editPost(
 }
 
 export const deletePost = async (id: string) => {
-    await PostApi.delete(id);
-    revalidatePath('/post');
-    redirect(`/post`);
+    try {
+        await PostApi.delete(id);
+        return { success: true };
+    } catch (error) {
+        return { success: false };
+    }
 };

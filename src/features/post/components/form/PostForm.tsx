@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useActionState } from 'react';
+import { FC, useActionState, useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/card';
 
 import { createPost, editPost } from '@/features/post/actions';
-import { ActionState } from '@/features/post/shemas';
+import { ActionState, PostErrorTypes, PostInput } from '@/features/post/shemas';
 
 import { ROUTES } from '@/routes';
 
@@ -31,10 +31,19 @@ interface PostFormProps {
 const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
     const action = postId ? editPost.bind(null, postId) : createPost;
     const [state, formAction, isPending] = useActionState(action, initialData);
+    const [errors, setErrors] = useState<PostErrorTypes | undefined>(undefined);
+
+    useEffect(() => {
+        setErrors(state?.errors ?? {});
+    }, [state]);
 
     if (state.success) {
-        redirect(postId ? ROUTES.GET_POST(postId) : ROUTES.GET_POSTS);
+        redirect(postId ? ROUTES.GET_POST(postId) : ROUTES.HOME);
     }
+
+    const handleInput = (name: string) => {
+        setErrors((prev) => ({ ...prev, [name]: undefined }));
+    };
 
     return (
         <div className="mx-auto max-w-xl px-4">
@@ -57,15 +66,16 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                         <div className="space-y-2">
                             <Label htmlFor="title">Title</Label>
                             <Input
+                                onChange={() => handleInput('title')}
                                 id="title"
                                 name="title"
                                 placeholder="Enter post title"
                                 defaultValue={state?.values?.title}
-                                aria-invalid={!!state?.errors?.title}
+                                aria-invalid={!!errors?.title}
                             />
-                            {state?.errors?.title && (
+                            {errors?.title && (
                                 <p className="text-sm font-medium text-destructive">
-                                    {state?.errors.title}
+                                    {errors.title}
                                 </p>
                             )}
                         </div>
@@ -73,15 +83,16 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                         <div className="space-y-2">
                             <Label htmlFor="author">Author</Label>
                             <Input
+                                onChange={() => handleInput('author')}
                                 id="author"
                                 name="author"
                                 placeholder="Author name"
                                 defaultValue={state?.values?.author}
-                                aria-invalid={!!state?.errors?.author}
+                                aria-invalid={!!errors?.author}
                             />
-                            {state?.errors?.author && (
+                            {errors?.author && (
                                 <p className="text-sm font-medium text-destructive">
-                                    {state?.errors.author}
+                                    {errors.author}
                                 </p>
                             )}
                         </div>
@@ -89,15 +100,16 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                         <div className="space-y-2">
                             <Label htmlFor="description">Description</Label>
                             <Textarea
+                                onChange={() => handleInput('description')}
                                 id="description"
                                 name="description"
                                 placeholder="Brief summary"
                                 defaultValue={state?.values?.description ?? ''}
-                                aria-invalid={!!state?.errors?.description}
+                                aria-invalid={!!errors?.description}
                             />
-                            {state?.errors?.description && (
+                            {errors?.description && (
                                 <p className="text-sm font-medium text-destructive">
-                                    {state?.errors.description}
+                                    {errors.description}
                                 </p>
                             )}
                         </div>
@@ -105,16 +117,17 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                         <div className="space-y-2">
                             <Label htmlFor="content">Content</Label>
                             <Textarea
+                                onChange={() => handleInput('content')}
                                 id="content"
                                 name="content"
                                 placeholder="Write your post content here..."
                                 defaultValue={state?.values?.content}
-                                aria-invalid={!!state?.errors?.content}
+                                aria-invalid={!!errors?.content}
                                 className="min-h-30"
                             />
-                            {state?.errors?.content && (
+                            {errors?.content && (
                                 <p className="text-sm font-medium text-destructive">
-                                    {state?.errors.content}
+                                    {errors.content}
                                 </p>
                             )}
                         </div>
@@ -130,7 +143,7 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                                 href={
                                     postId
                                         ? ROUTES.GET_POST(postId)
-                                        : ROUTES.GET_POSTS
+                                        : ROUTES.HOME
                                 }
                             >
                                 Cancel

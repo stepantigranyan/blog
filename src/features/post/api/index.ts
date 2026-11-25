@@ -5,7 +5,7 @@ import {
     PostSearchOptions,
 } from '@/features/post/types';
 
-import { getNow } from '@/lib/utils';
+import { getNow, sortBy } from '@/lib/utils';
 
 const API_KEY = process.env.API_KEY;
 const BASE_URL = `https://${API_KEY}.mockapi.io/api/v1/posts`;
@@ -57,34 +57,41 @@ class PostApi {
     }
 
     static async getAll(
-        page: number,
-        limit: number,
-        options?: PostSearchOptions
+        query: PostSearchOptions
     ): Promise<{ allPages: number; data: PostAttributes[] } | null> {
         try {
             const response = await fetch(BASE_URL);
             const posts: PostAttributes[] = await response.json();
 
-            let neededPosts: PostAttributes[];
+            let searchedPosts: PostAttributes[] = [];
+            let neededPosts: PostAttributes[]= [];
 
-            if (options !== undefined) {
-                const { author } = options;
-                const key = author ? 'author' : 'title';
+            const { page, limit, content, sort } = query;
 
-                neededPosts = posts.filter((post) =>
-                    post[key].toLowerCase().includes((options[key])!.toLowerCase())
+            if (content) {
+                searchedPosts = posts.filter((post) =>
+                    post.title.toLowerCase().startsWith(content?.toLowerCase()) ||
+                    post.content.toLowerCase().startsWith(content?.toLowerCase()) ||
+                    post.author.toLowerCase().startsWith(content?.toLowerCase())
                 );
             } else {
-                neededPosts = posts;
+                searchedPosts = posts;
+            }
+
+            if (sort) {
+                neededPosts = sortBy(searchedPosts, sort)
+            } else {
+                neededPosts = searchedPosts;
             }
 
             const count = neededPosts.length;
-            const offset = (page - 1) * limit;
+            const offset = (+page! - 1) * +limit!;
 
             return {
-                allPages: Math.ceil(count / limit),
-                data: neededPosts.slice(offset, offset + limit),
+                allPages: Math.ceil(count / +limit!),
+                data: neededPosts.slice(offset, offset + +limit!),
             };
+
         } catch (error) {
             return null;
         }

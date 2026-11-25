@@ -1,6 +1,7 @@
 'use client';
-import { SubmitEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+
+import { ChangeEvent, SubmitEvent, useMemo, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
     InputGroup,
@@ -10,75 +11,70 @@ import {
 } from '@/components/ui/input-group';
 import { Button } from '@/components/ui/button';
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-import { ChevronDown, X } from 'lucide-react';
+import {  Search, X } from 'lucide-react';
+import { ROUTES } from '@/routes';
+import { debounce } from '@/lib/utils';
+
 
 const PostListSearch = () => {
-    const [search, setSearch] = useState<string>('');
-    const [searchByType, setSearchByType] = useState<string>('title');
+    const searchParams = useSearchParams();
+    const content = searchParams.get('content');
 
+    const [search, setSearch] = useState<string>(content || '');
     const router = useRouter();
+
+    const debouncedPush = useMemo(
+        () => debounce((url: string) => router.push(url), 1000),
+        [router]
+    );
 
     const handleSearch = (event: SubmitEvent) => {
         event.preventDefault();
-        router.push(`/post?${searchByType}=${search}`);
+        const query = new URLSearchParams(searchParams);
+
+        if (search.trim()) {
+            query.set('content', search);
+        } else {
+            query.delete('content');
+        }
+
+        router.push(`${ROUTES.HOME}?${query}`);
     };
 
+    const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.currentTarget;
+        const query = new URLSearchParams(searchParams);
+
+        if (value.trim()) {
+            query.set('content', value);
+        } else {
+            query.delete('content');
+        }
+
+        setSearch(value);
+
+        debouncedPush(`${ROUTES.HOME}?${query}`);
+    };
+
+    const handleReset = () => {
+        setSearch('');
+        const query = new URLSearchParams(searchParams);
+        query.delete('content');
+        router.push(`${ROUTES.HOME}?${query}`);
+    }
+
     return (
-        <div className="mb-10">
+        <div className="w-full md:w-1/2">
             <form onSubmit={handleSearch}>
-                <InputGroup className="w-full md:w-1/2">
+                <InputGroup>
                     <InputGroupInput
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder={`Search by ${searchByType}`}
+                        onChange={handleInput}
+                        placeholder="Search"
                         id="search-input"
                         name="search-input"
                     />
-
-                    <InputGroupAddon>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                render={
-                                    <InputGroupButton
-                                        className="cursor-pointer"
-                                        variant="ghost"
-                                        aria-label="More"
-                                        size="icon-xs"
-                                    >
-                                        <ChevronDown />
-                                    </InputGroupButton>
-                                }
-                            />
-                            <DropdownMenuContent
-                                align="start"
-                                sideOffset={8}
-                                alignOffset={-4}
-                            >
-                                <DropdownMenuGroup>
-                                    <DropdownMenuItem
-                                        onClick={() => setSearchByType('title')}
-                                    >
-                                        Title
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={() =>
-                                            setSearchByType('author')
-                                        }
-                                    >
-                                        Author
-                                    </DropdownMenuItem>
-                                </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </InputGroupAddon>
 
                     <InputGroupAddon
                         align="inline-end"
@@ -87,7 +83,7 @@ const PostListSearch = () => {
                         <Button
                             size="icon-xs"
                             variant="ghost"
-                            onClick={() => setSearch('')}
+                            onClick={handleReset}
                         >
                             <X />
                         </Button>
@@ -96,11 +92,11 @@ const PostListSearch = () => {
                     <InputGroupAddon align="inline-end">
                         <InputGroupButton
                             className="cursor-pointer"
-                            size="xs"
+                            size="icon-xs"
                             variant="secondary"
                             type="submit"
                         >
-                            Search
+                            <Search />
                         </InputGroupButton>
                     </InputGroupAddon>
                 </InputGroup>

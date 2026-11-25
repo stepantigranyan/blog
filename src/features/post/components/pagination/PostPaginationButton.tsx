@@ -1,75 +1,86 @@
 'use client';
 
 import { FC } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-import {
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
+import { PaginationItem } from '@/components/ui/pagination';
+import { Button } from '@/components/ui/button';
 
-import { getQueryObject } from '@/lib/utils';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+
 import { ROUTES } from '@/routes';
 
 interface PostPaginationButtonProps {
-    next: number;
-    to?: number;
+    page: number;
     isActive?: boolean;
 }
 
 export const PostPaginationButton: FC<PostPaginationButtonProps> = ({
-    next,
-    to,
+    page,
     isActive,
 }) => {
-    const searchParams = useSearchParams();
-    const query = new URLSearchParams(searchParams);
+    const router = useRouter();
+    const searchParams = new URLSearchParams(useSearchParams().toString());
 
-    const page = getQueryObject(query).page ?? 1;
+    searchParams.set('page', String(page));
 
-    query.set('page', to ? String(to) : String(Number(page) + next));
+    const handleChangePage = () => {
+        router.replace(`${ROUTES.HOME}?${searchParams}`);
+    };
 
     return (
         <PaginationItem>
-            <PaginationLink
-                isActive={isActive}
-                href={`${ROUTES.GET_POSTS}?${query}`}
+            <Button
+                size="icon-sm"
+                variant={isActive ? 'outline' : 'ghost'}
+                onClick={handleChangePage}
             >
-                {to ? to : Number(page) + next}
-            </PaginationLink>
+                {page}
+            </Button>
         </PaginationItem>
     );
 };
 
 interface PostPaginationArrowsProps {
     type: 'prev' | 'next';
+    page: number;
 }
 
 export const PostPaginationArrows: FC<PostPaginationArrowsProps> = ({
     type,
+    page,
 }) => {
-    const searchParams = useSearchParams();
-    const query = new URLSearchParams(searchParams);
+    const router = useRouter();
+    const searchParams = new URLSearchParams(useSearchParams().toString());
 
-    const page = getQueryObject(query).page ?? 1;
+    searchParams.set('page', String(page));
 
-    query.set(
-        'page',
-        type === 'next' ? String(Number(page) + 1) : String(Number(page) - 1)
-    );
+    const handleChangePage = () => {
+        router.replace(`${ROUTES.HOME}?${searchParams}`);
+    };
 
     if (type === 'next') {
         return (
             <PaginationItem>
-                <PaginationNext href={`${ROUTES.GET_POSTS}?${query}`} />
+                <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={handleChangePage}
+                >
+                    <ArrowRight />
+                </Button>
             </PaginationItem>
         );
     } else {
         return (
             <PaginationItem>
-                <PaginationPrevious href={`${ROUTES.GET_POSTS}?${query}`} />
+                <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={handleChangePage}
+                >
+                    <ArrowLeft />
+                </Button>
             </PaginationItem>
         );
     }

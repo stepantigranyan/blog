@@ -23,9 +23,7 @@ const EditPostPage: FC<EditPostPageProps> = async ({ params }) => {
         success: false,
     };
 
-    return (
-        <PostForm postId={post.id} initialData={data} key={Date()} />
-    );
+    return <PostForm postId={post.id} initialData={data} key={Date()} />;
 };
 
 export default EditPostPage;

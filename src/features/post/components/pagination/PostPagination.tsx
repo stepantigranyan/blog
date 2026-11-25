@@ -15,60 +15,59 @@ import {
 } from '@/features/post/components/pagination/PostPaginationButton';
 
 interface PostPaginationProps {
-    pages: number;
+    allPages: number;
     currentPage: number;
-    limit: number;
 }
 
-const PostPagination: FC<PostPaginationProps> = ({
-    pages,
-    currentPage,
-}) => {
+const PostPagination: FC<PostPaginationProps> = ({ allPages, currentPage }) => {
     return (
         <div>
             <Pagination>
                 <PaginationContent className="grid grid-cols-[auto_1fr_auto]">
                     <div>
                         {currentPage > 1 && (
-                            <PostPaginationArrows type="prev" />
+                            <PostPaginationArrows
+                                type="prev"
+                                page={currentPage - 1}
+                            />
                         )}
                     </div>
 
                     <div className="flex items-center gap-x-1">
-                        {currentPage > 3 && (
-                            <PostPaginationButton next={0} to={1} />
-                        )}
+                        {currentPage > 2 && <PostPaginationButton page={1} />}
 
-                        {currentPage > 4 && (
+                        {currentPage > 3 && (
                             <PaginationItem>
                                 <PaginationEllipsis />
                             </PaginationItem>
                         )}
 
-                        {currentPage > 2 && <PostPaginationButton next={-2} />}
-
-                        {currentPage > 1 && <PostPaginationButton next={-1} />}
-
-                        <PostPaginationButton isActive={true} next={0} />
-
-                        {currentPage < pages && (
-                            <PostPaginationButton next={1} />
+                        {currentPage > 1 && (
+                            <PostPaginationButton page={currentPage - 1} />
                         )}
 
-                        {currentPage < pages - 1 && (
-                            <PostPaginationButton next={2} />
+                        <PostPaginationButton
+                            isActive={true}
+                            page={currentPage}
+                        />
+
+                        {currentPage < allPages && (
+                            <PostPaginationButton page={currentPage + 1} />
                         )}
 
-                        {currentPage < pages - 3 && <PaginationEllipsis />}
+                        {currentPage < allPages - 2 && <PaginationEllipsis />}
 
-                        {currentPage < pages - 2 && (
-                            <PostPaginationButton next={0} to={pages} />
+                        {currentPage < allPages - 1 && (
+                            <PostPaginationButton page={allPages} />
                         )}
                     </div>
 
                     <div>
-                        {currentPage < pages && (
-                            <PostPaginationArrows type="next" />
+                        {currentPage < allPages && (
+                            <PostPaginationArrows
+                                type="next"
+                                page={currentPage + 1}
+                            />
                         )}
                     </div>
                 </PaginationContent>

@@ -8,7 +8,7 @@ const emptyData: ActionState = {
 };
 
 const CreatePostPage = () => {
-    return <PostForm initialData={emptyData} />;
+    return <PostForm initialData={emptyData} key={Date()} />;
 };
 
 export default CreatePostPage;

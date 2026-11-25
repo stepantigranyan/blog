@@ -18,8 +18,6 @@ import { Button } from '@/components/ui/button';
 const EmptyPostsList = () => {
     const searchParams = useSearchParams();
 
-    console.log(getQueryObject(searchParams));
-
     return (
         <Empty className="h-full">
             <EmptyHeader>
@@ -31,7 +29,7 @@ const EmptyPostsList = () => {
             </EmptyHeader>
             <EmptyContent>
                 <Button variant="default">
-                    <Link href={ROUTES.GET_POSTS}>See all posts</Link>
+                    <Link href={ROUTES.HOME}>See all posts</Link>
                 </Button>
             </EmptyContent>
         </Empty>

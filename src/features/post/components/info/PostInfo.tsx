@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -27,17 +30,31 @@ interface PostInfoProps {
 }
 
 const PostInfo: FC<PostInfoProps> = ({ post }) => {
+    const router = useRouter();
+
+    const handleBack = () => {
+        const prevPage = sessionStorage.getItem('prevPage');
+
+        if (!prevPage) {
+            router.push(`${ROUTES.HOME}`);
+            return;
+        }
+
+        sessionStorage.removeItem('prev_page');
+        router.push(`${ROUTES.HOME}?${prevPage}`);
+    };
+
     return (
         <main className="mx-auto max-w-3xl">
             <div className="mb-6 flex items-center justify-between">
-                <Button className="cursor-pointer" variant="ghost" size="sm">
-                    <Link
-                        href={ROUTES.GET_POSTS}
-                        className="inline-flex items-center gap-2"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                        <span className="hidden sm:block">Back to Posts</span>
-                    </Link>
+                <Button
+                    className="cursor-pointer"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleBack}
+                >
+                    <ArrowLeft className="h-4 w-4" />
+                    <span className="hidden sm:block">Back to Posts</span>
                 </Button>
 
                 <div className="flex items-center gap-1">

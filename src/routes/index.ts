@@ -3,5 +3,4 @@ export const ROUTES = {
     CREATE_POST: '/post/new',
     EDIT_POST: (id: string) => `/post/${id}/edit`,
     GET_POST: (id: string) => `/post/${id}`,
-    GET_POSTS: '/post',
 } as const;

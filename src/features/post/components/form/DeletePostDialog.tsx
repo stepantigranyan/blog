@@ -9,10 +9,21 @@ import {
     DialogDescription,
 } from '@/components/ui/dialog';
 import { Trash } from 'lucide-react';
+
 import { deletePost } from '@/features/post/actions';
+import { redirect } from 'next/navigation';
+import { ROUTES } from '@/routes';
 
 const DeletePostDialog = ({ id }: { id: string }) => {
-    const deletePostById = deletePost.bind(null, id);
+    const formSubmit = async () => {
+        const { success } = await deletePost(id);
+
+        if (!success) {
+            return;
+        } else {
+            redirect(ROUTES.HOME);
+        }
+    };
 
     return (
         <Dialog>
@@ -37,7 +48,7 @@ const DeletePostDialog = ({ id }: { id: string }) => {
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                    <form action={deletePostById}>
+                    <form action={formSubmit}>
                         <Button type="submit" variant="destructive">
                             Delete
                         </Button>

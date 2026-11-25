@@ -1,9 +1,12 @@
-import PostListSearch from '@/features/post/components/list/PostListSearch';
+import PostListHeader from '@/features/post/components/list/PostListHeader';
+import { Suspense } from 'react';
 
 const PostsListLayout = ({ children }: LayoutProps<'/'>) => {
     return (
         <main className="relative min-h-[calc(100vh-80px)]">
-            <PostListSearch />
+            <Suspense fallback={null}>
+                <PostListHeader />
+            </Suspense>
             {children}
         </main>
     );
