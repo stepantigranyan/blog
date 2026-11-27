@@ -5,13 +5,21 @@ import PostForm from '@/features/post/components/form/PostForm';
 
 import { getPost } from '@/features/post/queries';
 import { ActionState } from '@/features/post/shemas';
+import { Metadata } from 'next';
 
 interface EditPostPageProps {
-    params: Promise<{ id: string }>;
+    params: Promise<{ slug: string }>;
+}
+
+export const metadata: Metadata = {
+    title: 'Edit',
 }
 
 const EditPostPage: FC<EditPostPageProps> = async ({ params }) => {
-    const { id } = await params;
+
+    const { slug } = await params;
+    const id = slug.split('_')[0]
+
     const post = await getPost(id);
 
     if (!post) {
@@ -23,7 +31,7 @@ const EditPostPage: FC<EditPostPageProps> = async ({ params }) => {
         success: false,
     };
 
-    return <PostForm postId={post.id} initialData={data} key={Date()} />;
+    return <PostForm slug={slug} initialData={data} key={Date.now()}/>;
 };
 
 export default EditPostPage;

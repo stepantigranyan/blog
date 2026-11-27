@@ -16,8 +16,8 @@ export interface PostOptionalAttributes extends Omit<
 > {}
 
 export interface PostSearchOptions {
-    page: string;
-    limit: string;
+    page?: string;
+    limit?: string;
     content?: string;
     sort?: SORT_TYPES;
 }

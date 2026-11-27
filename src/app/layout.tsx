@@ -16,7 +16,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-    title: 'Blog',
+    title: {
+        template: '%s | Blog',
+        default: 'Blog',
+    },
+
+    openGraph: {
+        type: 'website',
+        siteName: 'Blog',
+        title: 'Blog',
+        description: 'Blog Website',
+    }
 };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
@@ -25,7 +35,10 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
             lang="en"
             className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         >
-            <body className={`${geistSans.className}`}>
+        <head>
+            <title>Blog</title>
+        </head>
+        <body className={`${geistSans.className}`}>
                 <header className="absolute top-0 left-0 w-full shadow-sm">
                     <Wrapper>
                         <Header />

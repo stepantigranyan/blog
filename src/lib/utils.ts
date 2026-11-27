@@ -1,13 +1,12 @@
 import { ReadonlyURLSearchParams } from 'next/navigation';
 
-import { SORT_ATTRIBUTES } from '@/lib/consts';
 import { PostAttributes, SORT_TYPES } from '@/features/post/types';
 
 export { cn } from 'cn';
 
 export const getNow = () => new Date().toISOString();
 export const formatToLongDate = (isoString: string, locale = 'en-US') => {
-    const date = new Date(isoString);
+    const date = Date.parse(isoString);
 
     return new Intl.DateTimeFormat(locale, {
         month: 'long',
@@ -16,6 +15,7 @@ export const formatToLongDate = (isoString: string, locale = 'en-US') => {
         timeZone: 'UTC',
     }).format(date);
 };
+
 export const readingTimeMinutes = (str: string) =>
     Math.ceil(str.trim().split(/\s+/).length / 200);
 
@@ -68,3 +68,13 @@ export const sortBy = (
             );
     }
 };
+
+export const createSlug = (str: string, id: string) => {
+    return `${id}_${
+    str.replace(/([a-z\d])([A-Z])/g, "$1_$2")
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1_$2")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "")}`;
+}

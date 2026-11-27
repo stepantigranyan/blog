@@ -25,36 +25,25 @@ const PostListSearch = () => {
     const router = useRouter();
 
     const debouncedPush = useMemo(
-        () => debounce((url: string) => router.push(url), 1000),
+        () => debounce((url: string) => router.replace(url), 1000),
         [router]
     );
 
     const handleSearch = (event: SubmitEvent) => {
         event.preventDefault();
-        const query = new URLSearchParams(searchParams);
-
-        if (search.trim()) {
-            query.set('content', search);
-        } else {
-            query.delete('content');
-        }
-
-        router.push(`${ROUTES.HOME}?${query}`);
+        const sort = searchParams.get('sort');
+        debouncedPush(`${ROUTES.HOME}?content=${search}&${sort ? `sort=${sort}` : ''}`);
     };
 
     const handleInput = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget;
-        const query = new URLSearchParams(searchParams);
-
-        if (value.trim()) {
-            query.set('content', value);
-        } else {
-            query.delete('content');
-        }
-
         setSearch(value);
 
-        debouncedPush(`${ROUTES.HOME}?${query}`);
+        if (value.trim().length || value.length === 0) {
+            const sort = searchParams.get('sort');
+            debouncedPush(`${ROUTES.HOME}?content=${value}${sort ? `&sort=${sort}` : ''}`);
+        }
+
     };
 
     const handleReset = () => {

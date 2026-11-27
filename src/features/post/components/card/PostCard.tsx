@@ -1,7 +1,6 @@
 'use client';
 
 import { FC } from 'react';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import {
@@ -15,7 +14,7 @@ import {
 import { CalendarIcon } from 'lucide-react';
 
 import type { PostAttributes } from '@/features/post/types';
-import { formatToLongDate } from '@/lib/utils';
+import { createSlug, formatToLongDate } from '@/lib/utils';
 import { ROUTES } from '@/routes';
 
 interface PostCardProps extends Omit<PostAttributes, 'content' | 'updatedAt'> {}
@@ -32,7 +31,8 @@ const PostCard: FC<PostCardProps> = ({
 
     const handleShowInfo = () => {
         sessionStorage.setItem('prevPage', searchParams.toString());
-        router.push(`${ROUTES.GET_POST(id)}`);
+        const slug = createSlug(title, id)
+        router.push(`${ROUTES.GET_POST(slug)}`);
     };
 
     return (

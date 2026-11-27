@@ -11,7 +11,6 @@ import {
 import { SORT_ATTRIBUTES } from '@/lib/consts';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ROUTES } from '@/routes';
-import { sortTransform } from '@/features/post/utils';
 
 
 const PostListFilter = () => {
@@ -28,7 +27,7 @@ const PostListFilter = () => {
     return (
         <div>
                 <div className="flex items-center gap-x-2">
-                    <Select defaultValue={sortTransform(query.get('sort'))} name='sort' items={SORT_ATTRIBUTES}>
+                    <Select value={query.get('sort') || 'DATE_DESC'} name='sort' items={SORT_ATTRIBUTES}>
                         <SelectTrigger>
                             <SelectValue placeholder="Sort" />
                         </SelectTrigger>

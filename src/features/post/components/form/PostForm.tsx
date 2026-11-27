@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useActionState, useEffect, useState } from 'react';
+import { FC, startTransition, useActionState, useEffect, useRef, useState } from 'react';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 
@@ -19,26 +19,55 @@ import {
 } from '@/components/ui/card';
 
 import { createPost, editPost } from '@/features/post/actions';
-import { ActionState, PostErrorTypes, PostInput } from '@/features/post/shemas';
+import { ActionState, PostErrorTypes } from '@/features/post/shemas';
 
 import { ROUTES } from '@/routes';
+import { createSlug } from '@/lib/utils';
 
 interface PostFormProps {
-    postId?: string;
+    slug?: string;
     initialData: ActionState;
 }
 
-const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
-    const action = postId ? editPost.bind(null, postId) : createPost;
-    const [state, formAction, isPending] = useActionState(action, initialData);
+const PostForm: FC<PostFormProps> = ({ slug, initialData }) => {
+    const postId = slug?.split('_')[0];
+    const formRef = useRef(null)
+    const [state, formAction, isPending] = useActionState(
+        async (prevState: ActionState, payload: FormData | 'RESET') => {
+            if (payload === 'RESET') {
+                return initialData;
+            }
+
+            if (postId) {
+                return editPost(postId, prevState, payload);
+            }
+
+            return createPost(prevState, payload);
+        },
+        initialData
+    );
+
+    const resetForm = () => {
+        startTransition(() => {
+            formAction('RESET');
+        });
+        formRef.current?.reset();
+    };
+
     const [errors, setErrors] = useState<PostErrorTypes | undefined>(undefined);
 
     useEffect(() => {
         setErrors(state?.errors ?? {});
     }, [state]);
 
+    useEffect(() => {
+        return () => {
+            resetForm()
+        }
+    }, []);
+
     if (state.success) {
-        redirect(postId ? ROUTES.GET_POST(postId) : ROUTES.HOME);
+        redirect(postId ? ROUTES.GET_POST(createSlug(state.values!.title, postId)) : ROUTES.HOME);
     }
 
     const handleInput = (name: string) => {
@@ -61,7 +90,7 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                     </CardDescription>
                 </CardHeader>
 
-                <form action={formAction}>
+                <form action={formAction} ref={formRef}>
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="title">Title</Label>
@@ -142,7 +171,7 @@ const PostForm: FC<PostFormProps> = ({ postId, initialData }) => {
                             <Link
                                 href={
                                     postId
-                                        ? ROUTES.GET_POST(postId)
+                                        ? ROUTES.GET_POST(slug)
                                         : ROUTES.HOME
                                 }
                             >

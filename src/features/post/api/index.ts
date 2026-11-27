@@ -4,8 +4,9 @@ import {
     PostOptionalAttributes,
     PostSearchOptions,
 } from '@/features/post/types';
-
 import { getNow, sortBy } from '@/lib/utils';
+
+import { connection } from 'next/server';
 
 const API_KEY = process.env.API_KEY;
 const BASE_URL = `https://${API_KEY}.mockapi.io/api/v1/posts`;
@@ -16,6 +17,7 @@ class PostApi {
     ): Promise<PostAttributes | null> {
         try {
             const id = uuidv4();
+
             const createdAt = getNow();
             const updatedAt = getNow();
 
@@ -27,6 +29,7 @@ class PostApi {
             };
 
             const response = await fetch(BASE_URL, {
+                cache: 'no-cache',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -43,7 +46,9 @@ class PostApi {
 
     static async getOne(postId: string): Promise<PostAttributes | null> {
         try {
-            const response = await fetch(`${BASE_URL}/${postId}`);
+            const response = await fetch(`${BASE_URL}/${postId}`, {
+                cache: 'no-cache',
+            });
             const post: PostAttributes | string = await response.json();
 
             if (typeof post === 'string') {
@@ -60,7 +65,9 @@ class PostApi {
         query: PostSearchOptions
     ): Promise<{ allPages: number; data: PostAttributes[] } | null> {
         try {
-            const response = await fetch(BASE_URL);
+            const response = await fetch(BASE_URL, {
+                cache: 'no-cache',
+            });
             const posts: PostAttributes[] = await response.json();
 
             let searchedPosts: PostAttributes[] = [];
@@ -102,6 +109,8 @@ class PostApi {
         data: PostOptionalAttributes
     ): Promise<PostAttributes | null> {
         try {
+            await connection();
+
             const existingPost = await this.getOne(postId);
 
             if (!existingPost) {
@@ -111,6 +120,7 @@ class PostApi {
             const updatingPost: PostAttributes = { ...existingPost, ...data };
 
             const response = await fetch(`${BASE_URL}/${postId}`, {
+                cache: 'no-cache',
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,6 +138,7 @@ class PostApi {
     static async delete(postId: string): Promise<number | null> {
         try {
             const response = await fetch(`${BASE_URL}/${postId}`, {
+                cache: 'no-cache',
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

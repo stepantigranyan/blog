@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { FC } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -31,17 +30,18 @@ interface PostInfoProps {
 
 const PostInfo: FC<PostInfoProps> = ({ post }) => {
     const router = useRouter();
+    const pathname = usePathname();
 
     const handleBack = () => {
         const prevPage = sessionStorage.getItem('prevPage');
 
         if (!prevPage) {
-            router.push(`${ROUTES.HOME}`);
+            router.replace(`${ROUTES.HOME}`);
             return;
         }
 
-        sessionStorage.removeItem('prev_page');
         router.push(`${ROUTES.HOME}?${prevPage}`);
+        sessionStorage.removeItem('prevPage');
     };
 
     return (
@@ -62,14 +62,10 @@ const PostInfo: FC<PostInfoProps> = ({ post }) => {
                         className="cursor-pointer"
                         variant="outline"
                         size="sm"
+                        onClick={() => router.push(`${pathname}/edit`)}
                     >
-                        <Link
-                            href={ROUTES.EDIT_POST(post.id)}
-                            className="inline-flex items-center gap-2"
-                        >
-                            <Pencil className="h-4 w-4" />
-                            <span className="hidden sm:block">Edit Post</span>
-                        </Link>
+                        <Pencil className="h-4 w-4" />
+                        <span className="hidden sm:block">Edit Post</span>
                     </Button>
                     <DeletePostDialog id={post.id} />
                 </div>

@@ -9,7 +9,6 @@ import { LIMIT } from '@/lib/consts';
 import { getAllPosts } from '@/features/post/queries';
 import { redirect } from 'next/navigation';
 import { ROUTES } from '@/routes';
-import { sortTransform } from '@/features/post/utils';
 
 interface AllPostsProps {
     query: PostSearchOptions;
@@ -18,21 +17,42 @@ interface AllPostsProps {
 const AllPosts: FC<AllPostsProps> = async ({ query }) => {
     const { page, limit, sort, content } = query;
 
-    const searchOptions: PostSearchOptions = {
+    const searchOptions: PostSearchOptions = {};
 
-        page: isNaN(Number(page))
-            ? '1'
-            : Number(page) < 1
-              ? redirect(`${ROUTES.HOME}?page=1`)
-              : page,
-        limit: isNaN(Number(limit))
-            ? String(LIMIT)
-            : Number(query.limit) < 1
-              ? redirect(`${ROUTES.HOME}?page=1`)
-              : limit,
-        sort: sortTransform(sort) || redirect(`${ROUTES.HOME}?sort=DATE_DESC`),
-        content: content
-    };
+    if (isNaN(Number(page))) {
+        searchOptions.page = '1';
+    } else if (Number(page) >= 1) {
+        searchOptions.page = page;
+    } else {
+        redirect(`${ROUTES.HOME}?page=1`)
+    }
+
+    if (isNaN(Number(limit))) {
+        searchOptions.limit = String(LIMIT);
+    } else if (Number(limit) >= 1) {
+        searchOptions.limit = limit;
+    } else {
+        redirect(`${ROUTES.HOME}?page=${searchOptions.page}`);
+    }
+
+
+    if (content === undefined) {
+        searchOptions.content = '';
+    } else if (content.trim() === '') {
+        redirect(`${ROUTES.HOME}?page=${searchOptions.page}&limit=${searchOptions.limit}`);
+    } else {
+        searchOptions.content = content;
+    }
+
+    if (sort === undefined) {
+        searchOptions.sort = 'DATE_DESC';
+    } else {
+        if (sort === "DATE_DESC" || "DESC" || "DATE_ASC" || "ASC" ) {
+            searchOptions.sort = sort;
+        } else {
+            redirect(`${ROUTES.HOME}?page=${searchOptions.page}&limit=${searchOptions.limit}?conent=${searchOptions.content}`);
+        }
+    }
 
     const allPosts = await getAllPosts(searchOptions);
 
@@ -48,7 +68,7 @@ const AllPosts: FC<AllPostsProps> = async ({ query }) => {
                 {allPosts.allPages > 1 && allPosts.data.length > 0 && (
                     <PostPagination
                         allPages={allPosts.allPages}
-                        currentPage={+searchOptions.page}
+                        currentPage={+searchOptions.page!}
                     />
                 )}
             </div>
